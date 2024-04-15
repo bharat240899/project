@@ -8,7 +8,7 @@ const Signin =() =>{
     const [values,setValues] =useState({
       
         email:'jon@mail.com',
-        password:'jonboy7',
+        password:'Bharath@24',
         error:'',
         loading:false,
         redirectToReferrer:false

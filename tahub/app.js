@@ -22,7 +22,7 @@ const app = express()
 //db connection
 mongoose.connect(
   process.env.DATABASE,
-  { useNewUrlParser: true, useUnifiedTopology: true },
+  { useNewUrlParser: true, useUnifiedTopology: true ,family:4,},
 )
   .then(() => console.log('DB Connected'))
 
