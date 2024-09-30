@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 const pageNotFound = () => (
   
    
-        <div className="p-5 mt-5 success">
+        <div className="p-5 success">
             <div className="row">
                 <div className="col-md-6 offset-md-3 text-center mt-5">
                      <img src={search} alt="Success" className="img-fluid mt-4 success-icon" />
