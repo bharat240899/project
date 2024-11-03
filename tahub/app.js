@@ -37,6 +37,7 @@ app.use(cookieParser());
 app.use(expressValidator());
 app.use(cors());
 
+app.use(express.json()); // to parse application/json
 
 //routes midddleware()
 app.use("/api", authRoutes);

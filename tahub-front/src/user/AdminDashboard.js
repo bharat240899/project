@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 const AdminDashboard = () => {
 
-    const { user: { _id, fname, email, role } } = isAuthenticated()
+    const { user: { _id, fname, email, role} } = isAuthenticated()
     const adminLinks = () => {
         return (
             <div className="card">

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Layout from '../core/Layout';
 import { isAuthenticated } from '../auth';
-import {  Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { read, update, updateUser } from './apiUser';
 
 const Profile = ({ match }) => {
@@ -9,45 +9,54 @@ const Profile = ({ match }) => {
         name: '',
         email: '',
         password: '',
-        error: false,
-        success: false
+        error: '',
+        success: false,
+        loading: false,
     });
-  
-    const { token } = isAuthenticated();
-    const { name, email, password, success } = values;
 
-    const init = userId => {
-        // console.log(userId);
+    const { token } = isAuthenticated();
+    const { name, email, password, success, loading, error } = values;
+
+    const init = useCallback(userId => {
         read(userId, token).then(data => {
             if (data.error) {
-                setValues({ ...values, error: true });
+                setValues({ ...values, error: data.error });
             } else {
                 setValues({ ...values, name: data.name, email: data.email });
             }
         });
-    };
+    }, [token, values]);
 
     useEffect(() => {
         init(match.params.userId);
-    }, []);
+    }, [init, match.params.userId]);
 
     const handleChange = name => e => {
-        setValues({ ...values, error: false, [name]: e.target.value });
+        setValues({ ...values, error: '', [name]: e.target.value });
     };
 
     const clickSubmit = e => {
         e.preventDefault();
-        update(match.params.userId, token, { name, email, password }).then(data => {
+        setValues({ ...values, loading: true });
+
+        const updatedData = {
+            name,
+            email,
+            ...(password && { password }),
+        };
+
+        update(match.params.userId, token, updatedData).then(data => {
             if (data.error) {
-                // console.log(data.error);
-                alert(data.error);
+                setValues({ ...values, error: data.error, loading: false });
             } else {
                 updateUser(data, () => {
                     setValues({
                         ...values,
                         name: data.name,
                         email: data.email,
-                        success: true
+                        password: '',
+                        success: true,
+                        loading: false,
                     });
                 });
             }
@@ -83,7 +92,10 @@ const Profile = ({ match }) => {
 
     return (
         <Layout title="Profile" description="Update your profile" className="container-fluid">
-            <h2 className="mb-4">Profile update</h2>
+            <h2 className="mb-4">Profile Update</h2>
+            {loading && <div className="alert alert-info">Updating...</div>}
+            {error && <div className="alert alert-danger">{error}</div>}
+            {success && <div className="alert alert-success">Profile updated successfully!</div>}
             {profileUpdate(name, email, password)}
             {redirectUser(success)}
         </Layout>
